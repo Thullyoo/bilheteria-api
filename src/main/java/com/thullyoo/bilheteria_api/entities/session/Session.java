@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @Entity
@@ -22,9 +26,9 @@ public class Session {
 
     private Integer capacity;
 
-    private String date;
+    private LocalDate day;
 
-    private String time;
+    private Time time;
 
     @ManyToOne
     @JoinColumn(name = "movie_id")
@@ -32,4 +36,15 @@ public class Session {
 
     @OneToMany(mappedBy = "session")
     private Set<Ticket> tickets;
+
+    public Session(SessionRequest sessionRequest) {
+        this.capacity = sessionRequest.capacity();
+        this.day = LocalDate.parse(sessionRequest.day(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.time = Time.valueOf(sessionRequest.time());
+        this.room = sessionRequest.room();
+    }
+
+    public SessionResponse toSessionResponse(Session session) {
+        return new SessionResponse(session.getId(), session.getMovie().getId(), session.getRoom(), session.getCapacity(), session.getDay().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), session.getTime().toString());
+    }
 }
