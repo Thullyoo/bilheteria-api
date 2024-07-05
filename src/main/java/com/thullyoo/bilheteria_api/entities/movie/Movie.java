@@ -22,7 +22,6 @@ public class Movie {
 
     private String image;
 
-    @Column
     private String name;
 
     private String  description;
@@ -32,7 +31,6 @@ public class Movie {
     private String genre;
 
     private LocalDate release_date;
-
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     private Set<Session> sessions;
@@ -64,4 +62,9 @@ public class Movie {
     public MovieResponse toMovieResponse(Movie movie){
         return new MovieResponse(movie.getId(), movie.getImage(), movie.getName(), movie.getDescription(), movie.getActors().stream().toList(), movie.getGenre(), movie.getRelease_date().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
+
+    public MovieGetResponse toMovieGetResponse(Movie movie){
+        return new MovieGetResponse(movie.getId(), movie.getImage(), movie.getName(), movie.getDescription(), movie.getActors(), movie.getGenre(), movie.getRelease_date().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), movie.getSessions());
+    }
+
 }
