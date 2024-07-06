@@ -19,4 +19,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findByDateAndTimeAndRoom(@Param("day") LocalDate day,
                                                      @Param("time") Time time,
                                                      @Param("room") String room);
+
+    @Query("SELECT s FROM Session s WHERE s.movie.id = :movieId")
+    List<Session> findAllByMovie(@Param("movieId") Long movieId);
 }

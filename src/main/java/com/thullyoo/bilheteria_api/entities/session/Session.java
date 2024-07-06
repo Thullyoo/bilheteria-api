@@ -1,5 +1,10 @@
 package com.thullyoo.bilheteria_api.entities.session;
 
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.thullyoo.bilheteria_api.entities.ticket.Ticket;
 import com.thullyoo.bilheteria_api.entities.movie.Movie;
 import jakarta.persistence.*;
@@ -8,7 +13,6 @@ import lombok.Setter;
 
 import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
@@ -16,6 +20,7 @@ import java.util.Set;
 @Table(name = "TB_SESSIONS")
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Session {
 
     @Id
@@ -30,12 +35,27 @@ public class Session {
 
     private Time time;
 
-    @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("movie_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
     @OneToMany(mappedBy = "session")
     private Set<Ticket> tickets;
+
+    public Session() {
+    }
+
+    public Session(Long id, String room, Integer capacity, LocalDate day, Time time, Movie movie, Set<Ticket> tickets) {
+        this.id = id;
+        this.room = room;
+        this.capacity = capacity;
+        this.day = day;
+        this.time = time;
+        this.movie = movie;
+        this.tickets = tickets;
+    }
 
     public Session(SessionRequest sessionRequest) {
         this.capacity = sessionRequest.capacity();

@@ -4,6 +4,10 @@ import com.thullyoo.bilheteria_api.entities.movie.Movie;
 import com.thullyoo.bilheteria_api.entities.movie.MovieGetResponse;
 import com.thullyoo.bilheteria_api.entities.movie.MovieRequest;
 import com.thullyoo.bilheteria_api.entities.movie.MovieResponse;
+import com.thullyoo.bilheteria_api.exceptions.movie.MovieDeleteException;
+import com.thullyoo.bilheteria_api.exceptions.movie.MovieDescriptionException;
+import com.thullyoo.bilheteria_api.exceptions.movie.MovieIsPresentException;
+import com.thullyoo.bilheteria_api.exceptions.movie.MovieNotFoundException;
 import com.thullyoo.bilheteria_api.repositories.MovieRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
@@ -29,11 +33,11 @@ public class MovieService {
         Optional<Movie> optionalMovie = movieRepository.findByName(movieRequest.name());
 
         if (optionalMovie.isPresent()){
-            throw new RuntimeException("O filme " + movieRequest.name() + " já está cadastrado");
+            throw new MovieIsPresentException("O filme " + movieRequest.name() + " já está cadastrado");
         }
 
         if (movieRequest.description().length() > 100){
-            throw new RuntimeException("A descrição do filme não pode passar de 100 caracteres");
+            throw new MovieDescriptionException("A descrição do filme não pode passar de 100 caracteres");
         }
 
         Movie movie = movieRepository.save(new Movie(movieRequest));
@@ -45,7 +49,7 @@ public class MovieService {
         List<Movie> movieList = movieRepository.findAll();
 
         if (movieList.isEmpty()){
-            throw new RuntimeException("Não existe nenhum filme registrado");
+            throw new MovieNotFoundException("Não existe nenhum filme registrado");
         }
 
         List<MovieGetResponse> movieGetResponse = movieList.stream().map(movie -> movie.toMovieGetResponse(movie)).toList();
@@ -58,7 +62,7 @@ public class MovieService {
         Optional<Movie> movie = movieRepository.findById(id);
 
         if (movie.isEmpty()){
-            throw new RuntimeException("Filme não registrado");
+            throw new MovieNotFoundException("Filme não registrado");
         }
 
         return movie.get().toMovieGetResponse(movie.get());
@@ -68,7 +72,7 @@ public class MovieService {
         Optional<Movie> movie = movieRepository.findById(id);
 
         if (movie.isEmpty()){
-            throw new RuntimeException("Filme não registrado");
+            throw new MovieNotFoundException("Filme não registrado");
         }
 
         BeanUtils.copyProperties(movieRequest, movie.get());
@@ -85,10 +89,10 @@ public class MovieService {
         Optional<Movie> movie = movieRepository.findById(id);
 
         if (movie.isEmpty()){
-            throw new RuntimeException("Filme não registrado");
+            throw new MovieNotFoundException("Filme não registrado");
         }
         if (movie.get().getSessions().size() > 0){
-            throw new RuntimeException("Não é possível excluir o filme " + movie.get().getName() + " pois há sessões disponíveis.");
+            throw new MovieDeleteException("Não é possível excluir o filme " + movie.get().getName() + " pois há sessões disponíveis.");
         }
 
         movieRepository.deleteById(id);

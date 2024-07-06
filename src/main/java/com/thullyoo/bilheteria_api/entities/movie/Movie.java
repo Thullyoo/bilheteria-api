@@ -1,5 +1,7 @@
 package com.thullyoo.bilheteria_api.entities.movie;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.thullyoo.bilheteria_api.entities.session.Session;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 @Table(name = "TB_MOVIES")
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Movie {
 
     @Id

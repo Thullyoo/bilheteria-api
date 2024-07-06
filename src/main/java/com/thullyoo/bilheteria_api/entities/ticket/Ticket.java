@@ -1,5 +1,7 @@
 package com.thullyoo.bilheteria_api.entities.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thullyoo.bilheteria_api.entities.session.Session;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,6 +21,8 @@ public class Ticket {
 
     private String chair;
 
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("session_id")
     @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;
