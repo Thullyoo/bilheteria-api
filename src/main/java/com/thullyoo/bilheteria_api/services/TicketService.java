@@ -4,6 +4,8 @@ import com.thullyoo.bilheteria_api.entities.session.Session;
 import com.thullyoo.bilheteria_api.entities.ticket.Ticket;
 import com.thullyoo.bilheteria_api.entities.ticket.TicketRequest;
 import com.thullyoo.bilheteria_api.entities.ticket.TicketResponse;
+import com.thullyoo.bilheteria_api.exceptions.session.SessionNotFoundException;
+import com.thullyoo.bilheteria_api.exceptions.ticket.ChairOccupiedException;
 import com.thullyoo.bilheteria_api.repositories.SessionRepository;
 import com.thullyoo.bilheteria_api.repositories.TicketRepository;
 import jakarta.transaction.Transactional;
@@ -28,10 +30,10 @@ public class TicketService {
     public TicketResponse registerTicket(Long session_id, TicketRequest ticketRequest){
         Optional<Session> session = sessionRepository.findById(session_id);
         if (session.isEmpty()){
-            throw new RuntimeException("Sessão não encontrada.");
+            throw new SessionNotFoundException("Sessão não encontrada.");
         }
         if (ticketRepository.findByChair(ticketRequest.chair()).isPresent()){
-            throw new RuntimeException("Cadeira " + ticketRequest.chair() + " já está reservada.");
+            throw new ChairOccupiedException("Cadeira " + ticketRequest.chair() + " já está reservada.");
         }
 
         Ticket ticket = new Ticket();

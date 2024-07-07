@@ -4,6 +4,7 @@ import com.thullyoo.bilheteria_api.entities.movie.MovieGetResponse;
 import com.thullyoo.bilheteria_api.entities.movie.MovieRequest;
 import com.thullyoo.bilheteria_api.entities.movie.MovieResponse;
 import com.thullyoo.bilheteria_api.services.MovieService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class MovieController {
     }
 
     @PostMapping("/movies")
-    public ResponseEntity<MovieResponse> registerMovie(@RequestBody MovieRequest movieRequest){
+    public ResponseEntity<MovieResponse> registerMovie(@RequestBody @Valid MovieRequest movieRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.registerMovie(movieRequest));
     }
 
@@ -35,7 +36,7 @@ public class MovieController {
     }
 
     @PutMapping("/movies/{id}")
-    public ResponseEntity<MovieResponse> putMovie(@PathVariable("id") Long id, @RequestBody MovieRequest movieRequest){
+    public ResponseEntity<MovieResponse> putMovie(@PathVariable("id") Long id, @RequestBody @Valid MovieRequest movieRequest){
         return ResponseEntity.status(HttpStatus.OK).body(movieService.putMovie(id, movieRequest));
     }
 

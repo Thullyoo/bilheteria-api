@@ -4,6 +4,7 @@ import com.thullyoo.bilheteria_api.entities.session.Session;
 import com.thullyoo.bilheteria_api.entities.session.SessionRequest;
 import com.thullyoo.bilheteria_api.entities.session.SessionResponse;
 import com.thullyoo.bilheteria_api.services.SessionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,13 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
+    @PutMapping("/movies/{movie_id}/sessions/{session_id}")
+    public ResponseEntity<SessionResponse> updateSession(@PathVariable("movie_id") Long movie_id, @PathVariable("session_id") Long session_id, @RequestBody @Valid SessionRequest sessionRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(sessionService.updateSession(movie_id, session_id,sessionRequest));
+    }
 
     @PostMapping("/movies/{movie_id}/sessions")
-    public ResponseEntity<SessionResponse> registrerSession(@PathVariable("movie_id") Long movie_id, @RequestBody SessionRequest sessionRequest){
+    public ResponseEntity<SessionResponse> registrerSession(@PathVariable("movie_id") Long movie_id, @RequestBody @Valid SessionRequest sessionRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.registerSession(movie_id,sessionRequest));
     }
 

@@ -8,7 +8,9 @@ import lombok.Setter;
 public class Details {
     private String field;
     private String message;
-    public Details() {
 
+    public Details(String field, String message) {
+        this.field = field;
+        this.message = message;
     }
 }

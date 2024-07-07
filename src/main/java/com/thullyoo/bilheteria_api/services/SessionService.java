@@ -6,9 +6,12 @@ import com.thullyoo.bilheteria_api.entities.session.SessionRequest;
 import com.thullyoo.bilheteria_api.entities.session.SessionResponse;
 import com.thullyoo.bilheteria_api.exceptions.movie.MovieNotFoundException;
 import com.thullyoo.bilheteria_api.exceptions.session.SessionIsPresentException;
+import com.thullyoo.bilheteria_api.exceptions.session.SessionNotFoundException;
+import com.thullyoo.bilheteria_api.exceptions.session.SessionRelatedMovieException;
 import com.thullyoo.bilheteria_api.repositories.MovieRepository;
 import com.thullyoo.bilheteria_api.repositories.SessionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.DateFormatter;
@@ -56,10 +59,28 @@ public class SessionService {
         List<Session> sessions = sessionRepository.findAllByMovie(movie_id);
 
         if (sessions.size() < 0){
-            throw new RuntimeException("Não há sessões registradas");
+            throw new SessionNotFoundException("Não há sessões registradas");
         }
 
         return sessions;
+    }
+
+    @Transactional
+    public SessionResponse updateSession(Long movie_id, Long session_id, SessionRequest sessionRequest ){
+        Optional<Session> session = sessionRepository.findById(session_id);
+        if (session.isEmpty()){
+            throw new SessionNotFoundException("Sessão não registrada");
+        }
+        if (session.get().getMovie().getId() != movie_id){
+            throw new SessionRelatedMovieException("Essa sessão não está relacionado a esse filme");
+        }
+        BeanUtils.copyProperties(sessionRequest, session.get());
+        session.get().setDay(LocalDate.parse(sessionRequest.day(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        session.get().setTime(Time.valueOf(sessionRequest.time()));
+
+        sessionRepository.save(session.get());
+
+        return session.get().toSessionResponse(session.get());
     }
 
 }
