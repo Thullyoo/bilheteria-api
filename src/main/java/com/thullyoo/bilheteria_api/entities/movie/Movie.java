@@ -6,7 +6,6 @@ import com.thullyoo.bilheteria_api.entities.session.Session;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;

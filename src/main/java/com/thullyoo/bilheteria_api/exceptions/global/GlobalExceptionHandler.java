@@ -8,7 +8,6 @@ import com.thullyoo.bilheteria_api.exceptions.session.SessionIsPresentException;
 import com.thullyoo.bilheteria_api.exceptions.session.SessionNotFoundException;
 import com.thullyoo.bilheteria_api.exceptions.session.SessionRelatedMovieException;
 import com.thullyoo.bilheteria_api.exceptions.ticket.ChairOccupiedException;
-import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
